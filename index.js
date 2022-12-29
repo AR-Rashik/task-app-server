@@ -19,7 +19,20 @@ const client = new MongoClient(uri, {
   serverApi: ServerApiVersion.v1,
 });
 
-async function run() {}
+async function run() {
+  try {
+    const tasksCollection = client.db("taskApp").collection("tasks");
+
+    // get all the added tasks
+    app.get("/tasks", async (req, res) => {
+      const query = {};
+      const cursor = tasksCollection.find(query);
+      const tasks = await cursor.toArray();
+      res.send(tasks);
+    });
+  } finally {
+  }
+}
 run().catch((error) => console.error("Database connection error", error));
 
 app.get("/", (req, res) => {
