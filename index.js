@@ -25,10 +25,22 @@ async function run() {
 
     // get all the added tasks
     app.get("/tasks", async (req, res) => {
-      const query = {};
-      const cursor = tasksCollection.find(query);
+      let query = {};
+      if (req.query.email) {
+        query = {
+          email: req.query.email,
+        };
+      }
+      const cursor = tasksCollection.find(query).sort([["_id", -1]]);
       const tasks = await cursor.toArray();
       res.send(tasks);
+    });
+
+    // post my tasks
+    app.post("/task", async (req, res) => {
+      const task = req.body;
+      const result = await tasksCollection.insertOne(task);
+      res.send(result);
     });
   } finally {
   }
